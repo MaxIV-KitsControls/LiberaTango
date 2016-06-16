@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+#Debian rules file for the lib-liberabrilliancepluscommon package
+# verbose mode (comment it out for disable)
+export DH_VERBOSE=1
+
+%:
+	dh -Dsrc $@
