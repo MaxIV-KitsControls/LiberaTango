@@ -1,10 +1,10 @@
-Source: liberacommon
+Source: libliberatango
 Standards-Version: 2.0.0
 Section: utils
 Maintainer: MAXIV Laboratory <kits@maxlab.lu.se>, Cosylab d.o.o. <info@cosylab.com>
-Homepage: https://github.com/MaxIV-KitsControls/Libera-BrilliancePlus
-Vcs-Git: https://github.com/MaxIV-KitsControls/Libera-BrilliancePlus.git
-Vcs-Browser: https://github.com/MaxIV-KitsControls/Libera-BrilliancePlus
+Homepage: https://github.com/MaxIV-KitsControls/LiberaTango
+Vcs-Git: https://github.com/MaxIV-KitsControls/LiberaTango.git
+Vcs-Browser: https://github.com/MaxIV-KitsControls/LiberaTango
 Priority: optional
 Build-Depends: debhelper (>= 7.0.0),
                libtango8-dev,
@@ -14,9 +14,9 @@ Build-Depends: debhelper (>= 7.0.0),
 Package: libliberatango
 Architecture: i386
 Depends: libtango8, libera-base2.9, libera-mci2.9
-Description: Common Libraries for Libera Brilliance Plus Devices
+Description: Shared Libraries for Libera devices
 
-Package: libliberatango-dev
-Architecture: i386
-Depends: libtango8, libera-base2.9, libera-mci2.9
-Description: Common Libraries for Libera Brilliance Plus Devices
+#Package: libliberatango-dev
+#Architecture: i386
+#Depends: libtango8, libera-base2.9, libera-mci2.9
+#Description: Development library for Libera devices
