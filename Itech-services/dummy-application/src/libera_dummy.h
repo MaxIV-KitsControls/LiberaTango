@@ -35,6 +35,7 @@ private:
 	void RegistryAddTiming(const char *a_name);
     void RegistryAddRaf(const char *a_name);
     void RegistryAddApplication();
+    void RegistryAddPlatformSensors();
 	/* Dummy internal parameters */
 	int m_exitThread1;
 	std::thread m_thread1;

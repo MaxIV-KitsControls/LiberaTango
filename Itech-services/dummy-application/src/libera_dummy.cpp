@@ -116,9 +116,8 @@ void liberaDummy::OnPostConfig() {
 void liberaDummy::RegistryAddApplication()
 {
     istd_FTRC();
-    mci::Node application = GetRegistry()["application"];
-    application.GetTreeNode()
-		->Attach(Create<RegValueInt32Node>("synchronize_lmt", 100));
+    mci::Node application = GetRegistry();
+    application.GetTreeNode()->Attach(Create<RegNode>("application")->Attach(Create<RegValueUInt64Node>("synchronize_lmt", 0)));
 }
 
 void liberaDummy::RegistryAddTiming(const char *a_name)
@@ -138,21 +137,30 @@ void liberaDummy::RegistryAddTiming(const char *a_name)
     mci::Node boards = GetRegistry()["boards"];
     boards.GetTreeNode()
         ->Attach(Create<RegNode>(a_name)
+        	//boards.evrx2.connectors.pll
             ->Attach(Create<RegNode>("pll")
+                ->Attach(Create<RegValueBoolNode>("clk_good", true))
                 ->Attach(Create<RegValueBoolNode>("locked", true))
                 ->Attach(Create<RegValueInt32Node>("vcxo_offset", 100))
                 ->Attach(Create<RegValueBoolNode>("compensate_offset", true))
             )
             ->Attach(Create<RegNode>("events")
                 ->Attach(Create<RegNode>("t1")
-                    ->Attach(Create<RegValueUInt64Node>("count", 123))
+                    ->Attach(Create<RegValueUInt64Node>("count", 0))
                 )
                 ->Attach(Create<RegNode>("t2")
                     ->Attach(Create<RegValueUInt64Node>("count", 345))
                 )
             )
 
-			//triggers node
+			//boards.evrx2.clk_mgr node
+            ->Attach(Create<RegNode>("clk_mgr")
+                ->Attach(Create<RegNode>("mc")
+                	->Attach(Create<RegValueBoolNode>("locked", true))
+                )
+            )
+
+			//boards.evrx2.connectors.triggers node
             ->Attach(Create<RegNode>("triggers")
                 ->Attach(Create<RegNode>("mc")
                 	->Attach(Create<RegValueEnumNode<TriggerSource> >("source", tsInternal))
@@ -164,7 +172,7 @@ void liberaDummy::RegistryAddTiming(const char *a_name)
 					->Attach(Create<RegValueEnumNode<TriggerSource> >("source", tsInternal))
                 )
             )
-
+			//boards.evrx2.connectors
 			->Attach(Create<RegNode>("connectors")
 				->Attach(Create<RegNode>("t0")
 					->Attach(Create<RegValueEnumNode<cDirection> >("direction", dInput))
@@ -172,6 +180,7 @@ void liberaDummy::RegistryAddTiming(const char *a_name)
 
 				->Attach(Create<RegNode>("t1")
 					->Attach(Create<RegValueEnumNode<cDirection> >("direction", dInput))
+					->Attach(Create<RegValueEnumNode<conn_State> >("state", slow))
 					->Attach(Create<RegValueEnumNode<OutType> >("out_type", tOff)))
 
 				->Attach(Create<RegNode>("t2")
@@ -179,14 +188,22 @@ void liberaDummy::RegistryAddTiming(const char *a_name)
 					->Attach(Create<RegValueEnumNode<OutType> >("out_type", tOff)))
 			)
 
-			//rtc node
+			//boards.evrx2.connectors.rtc node
             ->Attach(Create<RegNode>("rtc")
             		->Attach(Create<RegValueEnumNode<Switch> >("decoder_switch", son))
             		->Attach(Create<RegValueEnumNode<mgtout> >("mgt_out", msfp_in))
             		->Attach(Create<RegValueUInt32Node>("ts_timestamp", 1)
-            				->Attach(Create<RegValueEnumNode<rtcTime> >("state", rprogress)))
+            				->Attach(Create<RegValueEnumNode<rtcTime> >("state", rdone)))
 
+					//boards.evrx2.connectors.rtc node.connectors
 					->Attach(Create<RegNode>("connectors")
+
+								->Attach(Create<RegNode>("t0")
+										->Attach(Create<RegValueUInt32Node>("id", 0))
+										->Attach(Create<RegNode>("edge")
+										->Attach(Create<RegValueBoolNode>("falling", 0))
+										->Attach(Create<RegValueBoolNode>("rising", 0))))
+
 									->Attach(Create<RegNode>("t1")
 											->Attach(Create<RegValueUInt32Node>("id", 0))
 											->Attach(Create<RegNode>("edge")
@@ -199,23 +216,32 @@ void liberaDummy::RegistryAddTiming(const char *a_name)
 											->Attach(Create<RegValueBoolNode>("falling", 0))
 											->Attach(Create<RegValueBoolNode>("rising", 0)))))
 
+					//boards.evrx2.connectors.rtc.sfp_tc node
+					->Attach(Create<RegNode>("sfp_tx")
+									->Attach(Create<RegNode>("interlock")
+											->Attach(Create<RegValueUInt32Node>("id", 0))))
+
+						//boards.evrx2.connectors.rtc.sfp_tc.mc
 						->Attach(Create<RegNode>("mc")
 								->Attach(Create<RegValueUInt32Node>("in_function", uint32array16node, (mci::eNfDefault | mci::eNfArray)))
 								->Attach(Create<RegValueUInt32Node>("in_mask", uint32array16node, (mci::eNfDefault | mci::eNfArray))))
 
+						//boards.evrx2.connectors.rtc.sfp_tc.t0
 						->Attach(Create<RegNode>("t0")
 										->Attach(Create<RegValueUInt32Node>("in_function", uint32array16node, (mci::eNfDefault | mci::eNfArray)))
 										->Attach(Create<RegValueUInt32Node>("in_mask", uint32array16node, (mci::eNfDefault | mci::eNfArray))))
 
+						//boards.evrx2.connectors.rtc.sfp_tc.t1
 						->Attach(Create<RegNode>("t1")
 										->Attach(Create<RegValueUInt32Node>("in_function", uint32array16node, (mci::eNfDefault | mci::eNfArray)))
 										->Attach(Create<RegValueUInt32Node>("in_mask", uint32array16node, (mci::eNfDefault | mci::eNfArray))))
 
+						//boards.evrx2.connectors.rtc.sfp_tc.t2
 						->Attach(Create<RegNode>("t2")
 										->Attach(Create<RegValueUInt32Node>("in_function", uint32array16node, (mci::eNfDefault | mci::eNfArray)))
 										->Attach(Create<RegValueUInt32Node>("in_mask", uint32array16node, (mci::eNfDefault | mci::eNfArray))))
 
-						//sfp_2_connectors
+						//boards.evrx2.connectors.rtc.sfp_tc.sfp_2_connectors
 						->Attach(Create<RegNode>("sfp_2_connectors")
 								->Attach(Create<RegNode>("t0")
 												->Attach(Create<RegValueUInt32Node>("duration", 11))
@@ -227,12 +253,14 @@ void liberaDummy::RegistryAddTiming(const char *a_name)
 								->Attach(Create<RegNode>("t1")
 												->Attach(Create<RegValueUInt32Node>("duration", 11))
 												->Attach(Create<RegValueUInt32Node>("delay", 0))
+												->Attach(Create<RegValueEnumNode<TriggerSource> >("state", tsInternal)) //TODO
 												->Attach(Create<RegValueUInt32Node>("in_function", uint32array4node, (mci::eNfDefault | mci::eNfArray)))
 												->Attach(Create<RegValueUInt32Node>("in_mask", uint32array4node, (mci::eNfDefault | mci::eNfArray))))
 
 								->Attach(Create<RegNode>("t2")
 												->Attach(Create<RegValueUInt32Node>("duration", 11))
 												->Attach(Create<RegValueUInt32Node>("delay", 0))
+												->Attach(Create<RegValueEnumNode<TriggerSource> >("state", tsInternal)) //TODO
 												->Attach(Create<RegValueUInt32Node>("in_function", uint32array4node, (mci::eNfDefault | mci::eNfArray)))
 												->Attach(Create<RegValueUInt32Node>("in_mask", uint32array4node, (mci::eNfDefault | mci::eNfArray)))))
 
@@ -381,16 +409,29 @@ void liberaDummy::RegistryAddRaf(const char *a_name)
         );
 }
 
+void liberaDummy::RegistryAddPlatformSensors()
+{
+
+	mci::Node boards = GetRegistry()["boards"];
+	mci::Node evrx2 = boards.GetNode("evrx2");
+
+	evrx2.GetTreeNode()
+			->Attach( Create<RegNode>("sensors")
+				->Attach( Create<RegNode>("ID_6")
+					->Attach( Create<RegValueDoubleNode>("value", 42))
+				)
+			);
+
+}
 /*-----------------------------------------------------------------------------*/
 /* expose our functionality to outside world                                   */
 
 void liberaDummy::OnRegistryAdd(ireg::TreeNodePtr &parent) {
 	istd_FTRC();
-
+	RegistryAddApplication(); //TODO delete
     RegistryAddTiming("evrx2");
-    //TODO: for raf3..6
 	RegistryAddRaf("raf5");
-	//RegistryAddApplication(); //TODO delete
+	RegistryAddPlatformSensors();
 }
 
 /*-----------------------------------------------------------------------------*/
