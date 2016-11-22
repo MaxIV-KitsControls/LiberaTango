@@ -25,6 +25,18 @@ const istd::EnumMap<cDirection>::Items istd::EnumMap<cDirection>::items =
     {{dInput, "Input"},
     {dOutput, "Output"}};
 
+
+enum conn_State {
+    slow       = 0,
+    shigh       = 1
+};
+
+template <>
+const istd::EnumMap<conn_State>::Items istd::EnumMap<conn_State>::items =
+    {{slow, "low"},
+    {shigh, "high"}};
+
+
 enum rtcTime {
     rprogress       = 0,
     rdone       = 1
