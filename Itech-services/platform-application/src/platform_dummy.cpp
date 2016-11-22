@@ -204,7 +204,7 @@ void platformDummy::OnPostConfig() {
 /*-----------------------------------------------------------------------------*/
 /* expose our functionality to outside world                                   */
 
-void platformDummy::OnRegistryAdd(ireg::TreeNodePtr &parent) {
+void platformDummy::RegistryAddPlatformSensors() {
 	istd_FTRC();
 
 	uint64_t f_read_write = mci::eNfDefault;
@@ -215,6 +215,7 @@ void platformDummy::OnRegistryAdd(ireg::TreeNodePtr &parent) {
 	 * of interest to Tango DS */
 
 	mci::Node regroot = GetRegistry();
+	mci::Node boards = GetRegistry()["boards"];
 
 	m_nodefan_left_rear = Create<RegReferenceDoubleNode>("left_rear", m_fan_left_rear, f_read_only);
 	m_nodefan_left_middle = Create<RegReferenceDoubleNode>("left_middle", m_fan_left_middle, f_read_only);
@@ -231,13 +232,19 @@ void platformDummy::OnRegistryAdd(ireg::TreeNodePtr &parent) {
 	fans.GetTreeNode()->Attach(m_nodefan_right_middle);
 	fans.GetTreeNode()->Attach(m_nodefan_right_front);
 
-	//Create application node
-	regroot.GetTreeNode()->Attach(Create<RegNode>("application"));
-    mci::Node application = GetRegistry()["application"];
-    application.GetTreeNode()
-		->Attach(Create<RegValueInt32Node>("synchronize_lmt", 100));
+	/*
 
 	mci::Node boards = GetRegistry()["boards"];
+	//mci::Node evrx2 = boards.GetNode("boards");
+
+	boards.GetTreeNode()
+			->Attach( Create<RegNode>("sensors")
+				->Attach( Create<RegNode>("ID_6")
+					->Attach( Create<RegValueDoubleNode>("value", 42))
+				)
+			);
+
+	*/
 
 	m_nodeid0 = Create<RegReferenceDoubleNode>("value", m_id0, f_read_only);
 	m_nodeid1 = Create<RegReferenceDoubleNode>("value", m_id1, f_read_only);
@@ -245,21 +252,31 @@ void platformDummy::OnRegistryAdd(ireg::TreeNodePtr &parent) {
 	m_nodeid3 = Create<RegReferenceDoubleNode>("value", m_id3, f_read_only);
 	m_nodeid4 = Create<RegReferenceDoubleNode>("value", m_id4, f_read_only);
 	m_nodeid5 = Create<RegReferenceDoubleNode>("value", m_id5, f_read_only);
-    boards.GetTreeNode()->Attach( Create<RegNode>("icb0")->Attach( Create<RegNode>("sensors")->Attach( Create<RegNode>("ID_1")->Attach(m_nodeid0))));
-    boards.GetTreeNode()->Attach( Create<RegNode>("evrx2")->Attach( Create<RegNode>("sensors")->Attach( Create<RegNode>("ID_6")->Attach(m_nodeid1))));
+    //boards.GetTreeNode()->Attach( Create<RegNode>("gdx1")->Attach( Create<RegNode>("fofb")->Attach( Create<RegNode>("interlock")->Attach(Create<RegValueBoolNode>("status", true)))));
+    													//->Attach( Create<RegNode>("fofb")->Attach( Create<RegNode>("interlock")->Create<RegValueBoolNode>("status", 0))));
+
+	boards.GetTreeNode()->Attach( Create<RegNode>("icb0")->Attach( Create<RegNode>("sensors")->Attach( Create<RegNode>("ID_1")->Attach(m_nodeid0))));
+    //boards.GetTreeNode()->Attach( Create<RegNode>("evrx2")->Attach( Create<RegNode>("sensors")->Attach( Create<RegNode>("ID_7")->Attach(m_nodeid1))));
     boards.GetTreeNode()->Attach( Create<RegNode>("rfspe3")->Attach( Create<RegNode>("sensors")->Attach( Create<RegNode>("ID_2")->Attach(m_nodeid2))));
     boards.GetTreeNode()->Attach( Create<RegNode>("rfspe4")->Attach( Create<RegNode>("sensors")->Attach( Create<RegNode>("ID_2")->Attach(m_nodeid3))));
-    boards.GetTreeNode()->Attach( Create<RegNode>("rfspe5")->Attach( Create<RegNode>("sensors")->Attach( Create<RegNode>("ID_2")->Attach(m_nodeid4))));
+    //boards.GetTreeNode()->Attach( Create<RegNode>("rfspe5")->Attach( Create<RegNode>("sensors")->Attach( Create<RegNode>("ID_2")->Attach(m_nodeid4))));
     boards.GetTreeNode()->Attach( Create<RegNode>("rfspe6")->Attach( Create<RegNode>("sensors")->Attach( Create<RegNode>("ID_2")->Attach(m_nodeid5))));
 
     boards.GetTreeNode()
-        ->Attach( Create<RegNode>("raf5")
+        ->Attach( Create<RegNode>("raf7")
             ->Attach( Create<RegNode>("sensors")
                 ->Attach( Create<RegNode>("ID_2")
                     ->Attach( Create<RegValueDoubleNode>("value", 42))
                 )
             )
         )
+	    ->Attach( Create<RegNode>("gdx1")
+	            ->Attach( Create<RegNode>("fofb")
+	                ->Attach( Create<RegNode>("interlock")
+	                    ->Attach( Create<RegValueBoolNode>("status", true))
+	                )
+	            )
+	        )
         ->Attach( Create<RegNode>("os")
             ->Attach( Create<RegNode>("sensors")
                 ->Attach( Create<RegNode>("ID_0")
@@ -277,6 +294,16 @@ void platformDummy::OnRegistryAdd(ireg::TreeNodePtr &parent) {
             )
         );
 
+    //boards.GetTreeNode()->Attach(Create<RegNode>('evrx3')->Attach(Create<RegNode>("pll2")));
+
+}
+
+/*-----------------------------------------------------------------------------*/
+/* expose our functionality to outside world                                   */
+
+void platformDummy::OnRegistryAdd(ireg::TreeNodePtr &parent) {
+	istd_FTRC();
+	RegistryAddPlatformSensors();
 }
 
 /*-----------------------------------------------------------------------------*/
@@ -306,8 +333,10 @@ iapp::LiberaBoard *platformDummy::CreateBoard(const bmc::Board* a_board) {
 
 int main(int argc, char *argv[])
 {
+	//istd::TraceSetLevel(static_cast<istd::TraceLevel_e>(int(std::getenv("TR"))));
+	istd::TraceSetLevel(static_cast<istd::TraceLevel_e>(4));
     auto ld( std::make_shared<platformDummy>() );
     bool success = ld->Run(argc, argv);
-    return (success ? EXIT_SUCCESS : EXIT_FAILURE);
+    std::cout << "Print code: " << success << std::endl;
+    //return (success ? EXIT_SUCCESS : EXIT_FAILURE);
 }
-

@@ -26,6 +26,7 @@ protected:
 	void OnPostInit();
 	void OnPostConfig();
 	void OnShutdown();
+    void RegistryAddPlatformSensors();
 	virtual iapp::LiberaBoard *CreateBoard(const bmc::Board* a_board);
 	void EventThread();
 	bool set_param(const double &a_val);
