@@ -4,7 +4,6 @@
 #include <mci/node.h>
 #include <mci/mci.h>
 
-
 namespace pyLibera {
 
 	class pyLiberaClient {

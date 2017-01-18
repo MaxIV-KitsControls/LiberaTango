@@ -22,12 +22,23 @@ cdef class PyLiberaClient:
         self._ip = ip
         self._root_type=root_type
         self._thisptr = new pyLiberaClient(self._ip, self._root_type)
-
+    
+    #experimental for reset the connection
+    def init(PyLiberaClient self):
+        #backup settings
+        ip = self._ip
+        ip = self._root_type
+        #remove old object
+        self.__exit__(None, None, None)
+        #create again same object
+        self._thisptr = new pyLiberaClient(self._ip, self._root_type)
+    
     def __dealloc__(PyLiberaClient self):
         # Only call del if the C++ object is alive,
         # or we will get a segfault.
         if self._thisptr != NULL:
             del self._thisptr
+
 
     cdef int _check_alive(PyLiberaClient self) except -1:
         # Beacuse of the context manager protocol, the C++ object

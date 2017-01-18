@@ -15,6 +15,9 @@ namespace pyLibera {
 	/* default constructor */
 	pyLiberaClient::pyLiberaClient(std::string ip_address)
 	{
+	    //Start mci interface
+		mci::Init();
+
 	    if (ip_address.empty())
 	    {
 	      ip_address = "127.0.0.1";
