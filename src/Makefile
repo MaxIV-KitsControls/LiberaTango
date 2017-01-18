@@ -133,7 +133,13 @@ SVC_OBJS =      \
 #
 include $(MAKE_ENV)/common_target.opt
 
+#=============================================================================
+#	Build LiberaTango python interface
+#
 
+pylibera:
+	@echo "Building pyLibera interface" 
+	python setup.py build_ext --inplace
 
 #PROTECTED REGION END#
 
