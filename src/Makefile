@@ -27,8 +27,8 @@ MAKE_ENV = /usr/share/pogo/preferences
 # PACKAGE_NAME is the name of the library/device/exe you want to build
 #
 PACKAGE_NAME = liberacommon
-MAJOR_VERS   = 1
-MINOR_VERS   = 0
+MAJOR_VERS   = 2
+MINOR_VERS   = 1
 RELEASE      = Release_$(MAJOR_VERS)_$(MINOR_VERS)
 LIBERA_VERSION = 2.9
 
@@ -134,52 +134,7 @@ SVC_OBJS =      \
 include $(MAKE_ENV)/common_target.opt
 
 #=============================================================================
-#	Build LiberaTango python interface
-#
-
-pylibera:
-	@echo "Building pyLibera interface" 
-	python setup.py build_ext --inplace
 
 #PROTECTED REGION END#
-
-#------------------------------------------------------------------------------
-#-- install:
-#------------------------------------------------------------------------------
-#Set the Install dir depends the OUTPUT_TYPE
-
-INCLUDES := $(wildcard *.h)
-
-ifeq ($(PROJECT_TYPE),DEVICE)
-	INSTALL_DIR=$(DESTDIR)/$(TANGO_HOME)/bin
-endif
-
-ifeq ($(PROJECT_TYPE),SHARED_LIB)
-	INSTALL_DIR=$(DESTDIR)/opt/libera/lib
-	INSTALL_INCL_DIR=$(DESTDIR)/$(TANGO_HOME)/include/liberacommon
-	OUTPUT_FILENAME=lib$(PROJECT_NAME).so.$(MAJOR_VERS).$(MINOR_VERS)
-endif
-
-install:
-	@echo "Installing $(OUTPUT_DIR)/$(PROJECT_NAME) $(OUTPUT_TYPE) to  $(INSTALL_DIR)"
-	
-ifeq ($(PROJECT_TYPE),DEVICE)
-	mkdir -p $(INSTALL_DIR)
-	mv $(OUTPUT_DIR)/$(PROJECT_NAME) $(INSTALL_DIR)
-	ls -l $(INSTALL_DIR)/$(PROJECT_NAME)
-endif
-
-ifeq ($(PROJECT_TYPE),SHARED_LIB)
-	mkdir -p $(INSTALL_DIR)
-	mv $(OUTPUT_DIR)/lib$(PROJECT_NAME).so $(INSTALL_DIR)/$(OUTPUT_FILENAME)
-	ls -l $(INSTALL_DIR)/$(OUTPUT_FILENAME)
-	#ln /opt/libera/lib/lib$(PROJECT_NAME).so  $(INSTALL_DIR)/$(OUTPUT_FILENAME)
-	#Copy .h files in incl dir
-	mkdir -p $(INSTALL_INCL_DIR) 
-	cp $(INCLUDES) $(INSTALL_INCL_DIR)
-	ls -l $(INSTALL_INCL_DIR)
-endif
-
-
 
 

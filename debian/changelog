@@ -1,3 +1,9 @@
+libliberatango (2.1.0) unstable; urgency=low
+
+  * Remove platform connection from LiberaClient
+
+ -- Vasileios Martos <vasileios.martos> Fri, 3 Feb 2017 12:00:00 +0000
+
 libliberatango (2.0.0) unstable; urgency=low
 
   * Split main repo, initial version of LiberaCommon inividual package
