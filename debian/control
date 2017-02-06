@@ -11,12 +11,12 @@ Build-Depends: debhelper (>= 7.0.0),
                libera-base2.9-dev,
                libera-mci2.9-dev
 
-Package: libliberatango-dev
-Architecture: i386
-Depends: libtango8, libera-base2.9, libera-mci2.9
-Description: Development library for Libera devices
-
 Package: libliberatango
 Architecture: i386
 Depends: libtango8, libera-base2.9, libera-mci2.9
 Description: Shared Libraries for Libera devices
+
+Package: libliberatango-dev
+Architecture: i386
+Depends: libtango8, libera-base2.9, libera-mci2.9
+Description: Development library for Libera devices

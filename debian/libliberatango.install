@@ -1,1 +1,1 @@
-opt/libera/lib/libliberacommon.so.*
+debian/tmp/opt/libera/lib/* opt/libera/lib/
