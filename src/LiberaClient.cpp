@@ -52,7 +52,7 @@ LiberaClient::~LiberaClient()
         m_thread.join();
     }
     m_signals.clear(); // destroy signal objects
-    m_attr_pm.clear(); // destroy platform attributes objects
+    //m_attr_pm.clear(); // destroy platform attributes objects
     m_attr.clear(); // destroy atribute objects
 }
 
@@ -76,9 +76,9 @@ void LiberaClient::UpdateAttr()
         for (auto i = m_attr.begin(); i != m_attr.end(); ++i) {
             (*i)->Read(m_root);
         }
-        for (auto i = m_attr_pm.begin(); i != m_attr_pm.end(); ++i) {
-            (*i)->Read(m_platform);
-        }
+        //for (auto i = m_attr_pm.begin(); i != m_attr_pm.end(); ++i) {
+        //    (*i)->Read(m_platform);
+        //}
     }
     catch (istd::Exception e)
     {
@@ -224,10 +224,11 @@ bool LiberaClient::Connect()
     m_connected = false;
 
     Connect(m_root, mci::Root::Application);
-    Connect(m_platform, mci::Root::Platform);
+    //Connect(m_platform, mci::Root::Platform);
 
     // update attributes for the first time
-    if (m_root.IsValid() && m_platform.IsValid()) {
+    //if (m_root.IsValid() && m_platform.IsValid()) {
+    if (m_root.IsValid()) {
         // set root node connection for signals
         for (auto i = m_signals.begin(); i != m_signals.end(); ++i) {
             if (!(*i)->Connect(m_root)) {
@@ -238,10 +239,10 @@ bool LiberaClient::Connect()
         }
         // start attribute update loop
         m_connected = true;
-        istd_TRC(istd::eTrcLow, "Connection to platform and application succeeded.");
+        istd_TRC(istd::eTrcLow, "Connection to application succeeded.");
     }
     else {
-        istd_TRC(istd::eTrcLow, "Connection to platform or application failed.");
+        istd_TRC(istd::eTrcLow, "Connection to application failed.");
     }
     return m_connected;
 }
@@ -271,7 +272,7 @@ void LiberaClient::Disconnect()
     m_connected = false;
 
     Disconnect(m_root, mci::Root::Application);
-    Disconnect(m_platform, mci::Root::Platform);
+    //Disconnect(m_platform, mci::Root::Platform);
 }
 
 bool LiberaClient::IsConnected()
