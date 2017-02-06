@@ -133,8 +133,24 @@ SVC_OBJS =      \
 #
 include $(MAKE_ENV)/common_target.opt
 
+#LDFLAGS +=      -shared -O -Wl,-soname,lib$(PROJECT_NAME).so.2.1
 #=============================================================================
+
 
 #PROTECTED REGION END#
 
+#------------------------------------------------------------------------------
+#-- install:
+#------------------------------------------------------------------------------
+INSTALL_DIR=$(DESTDIR)/opt/libera/lib
 
+install:
+	@echo "Installing $(OUTPUT_DIR)/lib$(PROJECT_NAME).so  to  $(INSTALL_DIR) , $(PWD)"
+ifeq ($(PROJECT_TYPE),SHARED_LIB)
+	mkdir -p $(INSTALL_DIR)
+	#TODO (leave completely the control to the debian package) next line used only during a "make install" command 
+	mv $(OUTPUT_DIR)/lib$(PROJECT_NAME).so $(INSTALL_DIR)/lib$(PROJECT_NAME).so.$(MAJOR_VERS).$(MINOR_VERS)
+	#TODO Create debian files from debmake https://www.debian.org/doc/manuals/debmake-doc/ch04.en.html
+endif
+
+ 
