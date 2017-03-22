@@ -21,7 +21,7 @@
 #=============================================================================
 # MAKE_ENV is the path to find common environment to buil project
 #
-MAKE_ENV = /usr/share/pogo/preferences
+MAKE_ENV = $(TANGO_HOME)/share/pogo/preferences
 
 #=============================================================================
 # PACKAGE_NAME is the name of the library/device/exe you want to build
@@ -30,7 +30,7 @@ PACKAGE_NAME = liberacommon
 MAJOR_VERS   = 2
 MINOR_VERS   = 1
 RELEASE      = Release_$(MAJOR_VERS)_$(MINOR_VERS)
-LIBERA_VERSION = 2.9
+LIBERA_VERSION = 3.2
 
 # #=============================================================================
 # # RELEASE_TYPE
@@ -119,15 +119,20 @@ include $(MAKE_ENV)/tango.opt
 #=============================================================================
 # SVC_OBJS is the list of all objects needed to make the output
 #
-#SVC_INCL =  $(PACKAGE_NAME).h $(PACKAGE_NAME)Class.h 
+SVC_INCL = LiberaClient.h \
+		   LiberaAttr.h \
+		   LiberaLogsAttr.h \
+		   LiberaSignal.h \
+		   LiberaSignalAttr.h \
+		   LiberaScalarAttr.h 
 
+SVC_OBJS =  $(LIB_OBJS)
 
-SVC_OBJS =      \
-            $(OBJDIR)/LiberaClient.o \
-            $(OBJDIR)/LiberaAttr.o   \
-            $(OBJDIR)/LiberaLogsAttr.o   \
-            $(OBJDIR)/LiberaSignal.o     
-
+LIB_OBJS =  $(OBJDIR)/LiberaClient.o \
+            $(OBJDIR)/LiberaAttr.o \
+            $(OBJDIR)/LiberaLogsAttr.o \
+            $(OBJDIR)/LiberaSignal.o
+ 
 #=============================================================================
 #	include common targets
 #
@@ -151,6 +156,7 @@ ifeq ($(PROJECT_TYPE),SHARED_LIB)
 	#TODO (leave completely the control to the debian package) next line used only during a "make install" command 
 	mv $(OUTPUT_DIR)/lib$(PROJECT_NAME).so $(INSTALL_DIR)/lib$(PROJECT_NAME).so.$(MAJOR_VERS).$(MINOR_VERS)
 	#TODO Create debian files from debmake https://www.debian.org/doc/manuals/debmake-doc/ch04.en.html
+	#ln 
 endif
 
  
