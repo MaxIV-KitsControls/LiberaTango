@@ -1,3 +1,9 @@
+libliberatango (3.1.0) unstable; urgency=low
+
+  * Support libera3.2 API and Ubuntu 14.04
+
+ -- Vasileios Martos <vasileios.martos> Wed, 29 Mar 2017 12:00:00 +0000
+
 libliberatango (2.1.0) unstable; urgency=low
 
   * Remove platform connection from LiberaClient
