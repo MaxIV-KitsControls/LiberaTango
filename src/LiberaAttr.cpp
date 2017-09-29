@@ -13,7 +13,7 @@
  */
 void LiberaAttr::Notify()
 {
-    if (m_client) {
-        m_client->Notify(this);
-    }
+        if (m_client) {
+                m_client->Notify(this);
+        }
 }

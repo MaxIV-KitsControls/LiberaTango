@@ -13,28 +13,27 @@ char c_emptyStr[] = "";
  * Implementation for log read attribute of type  Spectrum of Tango::DevString.
  */
 LiberaLogsAttr::LiberaLogsAttr(Tango::DevString *&a_attr, const size_t a_size)
-  : LiberaAttr(),
-    m_size(a_size),
-    m_attr(a_attr)
+        : LiberaAttr(),
+        m_size(a_size),
+        m_attr(a_attr)
 {
-    m_attr = new Tango::DevString[m_size];
-    for (size_t i(0); i < m_size; ++i) {
-        m_attr[i] = c_emptyStr;
-    }
+        m_attr = new Tango::DevString[m_size];
+        for (size_t i(0); i < m_size; ++i) {
+                m_attr[i] = c_emptyStr;
+        }
 }
 
 LiberaLogsAttr::~LiberaLogsAttr()
 {
-    delete [] m_attr;
+        delete [] m_attr;
 }
 
 void LiberaLogsAttr::Read(mci::Node &)
 {
-    //TODO
+        //TODO
 }
 
 void LiberaLogsAttr::Write(mci::Node &, const Tango::DevString)
 {
-    //TODO
+        //TODO
 }
-

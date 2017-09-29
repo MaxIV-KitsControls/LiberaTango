@@ -19,37 +19,37 @@
 #include "LiberaSignal.h"
 
 LiberaSignal::LiberaSignal(const std::string &a_path, size_t a_length,
-    Tango::DevBoolean *&a_enabled, Tango::DevLong *&a_bufSize)
-  : m_running(false),
-    m_thread(),
-    m_period(2000),
-    m_enabled(a_enabled),
-    m_length(a_bufSize),
-    m_connected(false),
-    m_mode(isig::eModeDodNow),
-    m_path(a_path)
+                           Tango::DevBoolean *&a_enabled, Tango::DevLong *&a_bufSize)
+        : m_running(false),
+        m_thread(),
+        m_period(2000),
+        m_enabled(a_enabled),
+        m_length(a_bufSize),
+        m_connected(false),
+        m_mode(isig::eModeDodNow),
+        m_path(a_path)
 {
-    istd_FTRC();
-    m_enabled = new Tango::DevBoolean;
-    *m_enabled = false;
+        istd_FTRC();
+        m_enabled = new Tango::DevBoolean;
+        *m_enabled = false;
 
-    m_length = new Tango::DevLong;
-    *m_length = a_length;
+        m_length = new Tango::DevLong;
+        *m_length = a_length;
 
-    m_thread = std::thread(std::ref(*this));
-    // safety check, wait that thread function has started
-    while (!m_running) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    };
+        m_thread = std::thread(std::ref(*this));
+        // safety check, wait that thread function has started
+        while (!m_running) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        };
 }
 
 LiberaSignal::~LiberaSignal()
 {
-    istd_FTRC();
-    Stop();
-    delete m_enabled;
-    delete m_length;
-    istd_TRC(istd::eTrcDetail, "Destroyed base signal for: " << m_path);
+        istd_FTRC();
+        Stop();
+        delete m_enabled;
+        delete m_length;
+        istd_TRC(istd::eTrcDetail, "Destroyed base signal for: " << m_path);
 }
 
 /**
@@ -58,11 +58,11 @@ LiberaSignal::~LiberaSignal()
  */
 void LiberaSignal::Stop()
 {
-    istd_FTRC();
-    m_running = false;
-    if (m_thread.joinable()) {
-        m_thread.join();
-    }
+        istd_FTRC();
+        m_running = false;
+        if (m_thread.joinable()) {
+                m_thread.join();
+        }
 }
 
 /**
@@ -71,25 +71,25 @@ void LiberaSignal::Stop()
  */
 void LiberaSignal::operator()()
 {
-    istd_FTRC();
-    // thread function has started
-    m_running = true;
-    while (m_running) {
-        if (*m_enabled && m_connected) {
-            istd_TRC(istd::eTrcDetail, "Update from thread for: " << m_path);
-            Update();
-            if (m_mode == isig::eModeDodNow) {
-                // In order to avoid busy loop the dod acquisition with
-                // eModeDodNow waits here, since Read() is immediate.
-                std::this_thread::sleep_for(std::chrono::milliseconds(m_period));
-            }
+        istd_FTRC();
+        // thread function has started
+        m_running = true;
+        while (m_running) {
+                if (*m_enabled && m_connected) {
+                        istd_TRC(istd::eTrcDetail, "Update from thread for: " << m_path);
+                        Update();
+                        if (m_mode == isig::eModeDodNow) {
+                                // In order to avoid busy loop the dod acquisition with
+                                // eModeDodNow waits here, since Read() is immediate.
+                                std::this_thread::sleep_for(std::chrono::milliseconds(m_period));
+                        }
+                }
+                else {
+                        // wait for stop running
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                }
         }
-        else {
-            // wait for stop running
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-    }
-    istd_TRC(istd::eTrcHigh, "Exit update thread for: " << m_path);
+        istd_TRC(istd::eTrcHigh, "Exit update thread for: " << m_path);
 }
 
 /**
@@ -99,20 +99,20 @@ void LiberaSignal::operator()()
  */
 void LiberaSignal::Update()
 {
-    istd_FTRC();
+        istd_FTRC();
 
-    try {
-        UpdateSignal();
-        if (m_callback)
-            m_callback(m_callback_arg);
-    }
-    catch (istd::Exception e)
-    {
-        istd_TRC(istd::eTrcLow, "Exception thrown while reading signal: " << m_path);
-        istd_TRC(istd::eTrcLow, e.what());
-        Disable();
-        m_connected = false;
-    }
+        try {
+                UpdateSignal();
+                if (m_callback)
+                        m_callback(m_callback_arg);
+        }
+        catch (istd::Exception e)
+        {
+                istd_TRC(istd::eTrcLow, "Exception thrown while reading signal: " << m_path);
+                istd_TRC(istd::eTrcLow, e.what());
+                Disable();
+                m_connected = false;
+        }
 }
 
 /**
@@ -120,59 +120,59 @@ void LiberaSignal::Update()
  */
 bool LiberaSignal::Connect(mci::Node &a_root)
 {
-    istd_FTRC();
-    m_connected = false;
-    m_root = a_root;
-    try {
-        mci::Node sNode = m_root.GetNode(mci::Tokenize(m_path));
-        Initialize(sNode);
-        m_connected = true;
-    }
-    catch (istd::Exception e)
-    {
-        istd_TRC(istd::eTrcLow, "Exception thrown while connecting signal: " << m_path);
-        istd_TRC(istd::eTrcLow, e.what());
-    }
-    return m_connected;
+        istd_FTRC();
+        m_connected = false;
+        m_root = a_root;
+        try {
+                mci::Node sNode = m_root.GetNode(mci::Tokenize(m_path));
+                Initialize(sNode);
+                m_connected = true;
+        }
+        catch (istd::Exception e)
+        {
+                istd_TRC(istd::eTrcLow, "Exception thrown while connecting signal: " << m_path);
+                istd_TRC(istd::eTrcLow, e.what());
+        }
+        return m_connected;
 }
 
-void LiberaSignal::SetMode(isig::AccessMode_e  a_mode)
+void LiberaSignal::SetMode(isig::AccessMode_e a_mode)
 {
-    m_mode = a_mode;
+        m_mode = a_mode;
 }
 
 isig::AccessMode_e LiberaSignal::GetMode()
 {
-    return m_mode;
+        return m_mode;
 }
 
 void LiberaSignal::Enable()
 {
-    *m_enabled = true;
+        *m_enabled = true;
 }
 
 void LiberaSignal::Disable()
 {
-    *m_enabled = false;
+        *m_enabled = false;
 }
 
 void LiberaSignal::SetPeriod(uint32_t a_period)
 {
-    m_period = a_period;
+        m_period = a_period;
 }
 
 size_t LiberaSignal::GetLength()
 {
-    return *m_length;
+        return *m_length;
 }
 
 void LiberaSignal::SetLength(size_t a_length)
 {
-    *m_length = a_length;
+        *m_length = a_length;
 }
 
 void LiberaSignal::SetNotifier(SignalCallback a_callback, void *a_arg)
 {
-    m_callback = a_callback;
-    m_callback_arg = a_arg;
+        m_callback = a_callback;
+        m_callback_arg = a_arg;
 }

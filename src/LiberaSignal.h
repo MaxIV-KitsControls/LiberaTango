@@ -26,51 +26,51 @@ typedef void (*SignalCallback)(void *);
  */
 class LiberaSignal {
 public:
-    LiberaSignal(const std::string &a_path, const size_t a_length,
-        Tango::DevBoolean *&a_enabled, Tango::DevLong *&a_bufSize);
-    virtual ~LiberaSignal();
+LiberaSignal(const std::string &a_path, const size_t a_length,
+             Tango::DevBoolean *&a_enabled, Tango::DevLong *&a_bufSize);
+virtual ~LiberaSignal();
 
-    bool Connect(mci::Node &a_root);
-    void Enable();
-    void Disable();
-    void SetPeriod(uint32_t a_period);
-    void operator ()();
-    void Update();
-    void SetMode(isig::AccessMode_e  a_mode);
+bool Connect(mci::Node &a_root);
+void Enable();
+void Disable();
+void SetPeriod(uint32_t a_period);
+void operator ()();
+void Update();
+void SetMode(isig::AccessMode_e a_mode);
 
-    void SetNotifier(SignalCallback a_callback, void *a_arg);
+void SetNotifier(SignalCallback a_callback, void *a_arg);
 
-    // interface functions for the derived class
-    virtual void SetOffset(int32_t a_offset) = 0;
-    virtual void Realloc(size_t a_length) = 0;
-    virtual bool IsUpdated() = 0;
-    virtual void ClearUpdated() = 0;
-    virtual void GetData() = 0;
+// interface functions for the derived class
+virtual void SetOffset(int32_t a_offset) = 0;
+virtual void Realloc(size_t a_length) = 0;
+virtual bool IsUpdated() = 0;
+virtual void ClearUpdated() = 0;
+virtual void GetData() = 0;
 
 protected:
-    virtual int32_t    GetOffset() = 0;
-    isig::AccessMode_e GetMode();
-    size_t GetLength();
-    void   SetLength(size_t a_length);
-    void   Stop();
+virtual int32_t    GetOffset() = 0;
+isig::AccessMode_e GetMode();
+size_t GetLength();
+void   SetLength(size_t a_length);
+void   Stop();
 
 private:
-    virtual void Initialize(mci::Node &a_node) = 0;
-    virtual void UpdateSignal() = 0;
+virtual void Initialize(mci::Node &a_node) = 0;
+virtual void UpdateSignal() = 0;
 
-    std::atomic<bool>   m_running;
-    std::thread         m_thread;
-    uint32_t            m_period;
-    Tango::DevBoolean *&m_enabled;
-    Tango::DevLong    *&m_length; // length of each column
-    bool                m_connected;
-    isig::AccessMode_e  m_mode;
+std::atomic<bool>   m_running;
+std::thread m_thread;
+uint32_t m_period;
+Tango::DevBoolean *&m_enabled;
+Tango::DevLong    *&m_length;     // length of each column
+bool m_connected;
+isig::AccessMode_e m_mode;
 
-    const std::string m_path;
-    mci::Node m_root;
+const std::string m_path;
+mci::Node m_root;
 
-    SignalCallback m_callback;
-    void *m_callback_arg;
+SignalCallback m_callback;
+void *m_callback_arg;
 };
 
 #endif //LIBERA_SIGNAL_H

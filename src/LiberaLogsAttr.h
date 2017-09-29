@@ -16,15 +16,15 @@
 
 class LiberaLogsAttr : public LiberaAttr {
 public:
-    LiberaLogsAttr(Tango::DevString *&a_attr, const size_t a_size);
-    virtual ~LiberaLogsAttr();
+LiberaLogsAttr(Tango::DevString *&a_attr, const size_t a_size);
+virtual ~LiberaLogsAttr();
 
-    virtual void Read(mci::Node &a_root);
-    void Write(mci::Node &a_root, const Tango::DevString a_val);
+virtual void Read(mci::Node &a_root);
+void Write(mci::Node &a_root, const Tango::DevString a_val);
 
 private:
-    size_t             m_size;
-    Tango::DevString *&m_attr;
+size_t m_size;
+Tango::DevString *&m_attr;
 };
 
 #endif //LIBERA_LOGS_ATTR_H
