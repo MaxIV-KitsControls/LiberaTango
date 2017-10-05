@@ -14,6 +14,8 @@
 #include "LiberaLogsAttr.h"
 #include "LiberaSignalAttr.h"
 
+typedef void (*LiberaAttrCallback)(void *);
+
 /*******************************************************************************
  * Class for handling connection to the Libera application.
  */
@@ -45,19 +47,6 @@ public:
     }
 
     /**
-     * Atributes related to platform management use platform daemon registry
-     * and are added to different list.
-     */
-//    template <typename TangoType>
-//    void AddScalarPM(const std::string &a_path, TangoType *&a_attr,
-//        TangoType (*a_reader)(mci::Node &, const std::string &) = LiberaScalarAttr<TangoType>::DoRead,
-//        void (*a_writer)(mci::Node &, const std::string &, const TangoType) = LiberaScalarAttr<TangoType>::DoWrite)
-//    {
-//        m_attr_pm.push_back(
-//            std::make_shared<LiberaScalarAttr<TangoType> >(a_path, a_attr, a_reader, a_writer));
-//    }
-
-    /**
      * Spectrum attribute that is not a signal needs special handling.
      */
     void AddLogsRead(Tango::DevString *&a_attr, const size_t a_size)
@@ -70,16 +59,16 @@ public:
      * Assign the LiberaBrilliancePlus object's function to be called
      * if attribute value changes.
      */
-    template<typename TangoDevice>
-    void SetNotifier(Tango::DevBoolean *&a_attr, void (TangoDevice::*a_notifier)())
-    {
-        for (auto i = m_attr.begin(); i != m_attr.end(); ++i) {
-            if ((*i)->IsEqual(a_attr)) {
-                m_notify[i->get()] = std::bind(a_notifier, m_deviceServer);
-                (*i)->EnableNotify(this);
-            }
-        }
-    }
+     template<typename TangoType>
+     void SetNotifier(TangoType *&a_attr, LiberaAttrCallback a_callback, void *a_arg)
+     {
+         for (auto i = m_attr.begin(); i != m_attr.end(); ++i) {
+             if ((*i)->IsEqual(a_attr)) {
+                 m_notify[i->get()] = std::bind(a_callback, a_arg);
+                 (*i)->EnableNotify(this);
+             }
+         }
+     }
 
     void Notify(LiberaAttr *a_attr);
 
@@ -143,10 +132,8 @@ private:
     std::string m_ip_address;
 
     mci::Node            m_root;
-    //mci::Node            m_platform;
 
     std::vector<std::shared_ptr<LiberaAttr> >   m_attr;    // list of attributes to be updated
-    //std::vector<std::shared_ptr<LiberaAttr> >   m_attr_pm; // platform list of attributes
     std::vector<std::shared_ptr<LiberaSignal> > m_signals; // list of managed signals
     std::map<LiberaAttr *, std::function<void ()> > m_notify; // map of notification callbacks
 public:
