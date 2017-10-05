@@ -14,6 +14,8 @@
 #include "LiberaLogsAttr.h"
 #include "LiberaSignalAttr.h"
 
+typedef void (*LiberaAttrCallback)(void *);
+
 /*******************************************************************************
  * Class for handling connection to the Libera application.
  */
@@ -70,16 +72,18 @@ public:
      * Assign the LiberaBrilliancePlus object's function to be called
      * if attribute value changes.
      */
-    template<typename TangoDevice>
-    void SetNotifier(Tango::DevBoolean *&a_attr, void (TangoDevice::*a_notifier)())
-    {
-        for (auto i = m_attr.begin(); i != m_attr.end(); ++i) {
-            if ((*i)->IsEqual(a_attr)) {
-                m_notify[i->get()] = std::bind(a_notifier, m_deviceServer);
-                (*i)->EnableNotify(this);
-            }
-        }
-    }
+     template<typename TangoType>
+     void SetNotifier(TangoType *&a_attr, LiberaAttrCallback a_callback, void *a_arg)
+     {
+         for (auto i = m_attr.begin(); i != m_attr.end(); ++i) {
+             if ((*i)->IsEqual(a_attr)) {
+                 //m_notify[i->get()] = std::bind(a_notifier, m_deviceServer);
+                 m_notify[i->get()] = std::bind(a_callback, a_arg);
+                 //m_notify[i->get()]= a_callback(a_arg);
+                 (*i)->EnableNotify(this);
+             }
+         }
+     }
 
     void Notify(LiberaAttr *a_attr);
 
