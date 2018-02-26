@@ -21,16 +21,16 @@
 #=============================================================================
 # MAKE_ENV is the path to find common environment to buil project
 #
-MAKE_ENV = /usr/share/pogo/preferences
+MAKE_ENV = $(TANGO_HOME)/share/pogo/preferences
 
 #=============================================================================
 # PACKAGE_NAME is the name of the library/device/exe you want to build
 #
 PACKAGE_NAME = liberacommon
-MAJOR_VERS   = 2
-MINOR_VERS   = 2
+MAJOR_VERS   = 3
+MINOR_VERS   = 1
 RELEASE      = Release_$(MAJOR_VERS)_$(MINOR_VERS)
-LIBERA_VERSION = 2.9
+LIBERA_VERSION = 3.2
 
 # #=============================================================================
 # # RELEASE_TYPE
@@ -80,7 +80,7 @@ LIB_DIR_USER= -L /opt/libera/lib
 #   - '-ldl -lpthread' is automatically appended in all cases
 #
 # !!! ATTENTION !!!
-# Be aware that the order matters. 
+# Be aware that the order matters.
 # For example if you must link with libA, and if libA depends itself on libB
 # you must use '-lA -lB' in this order as link flags, otherwise you will get
 # 'undefined reference' errors
@@ -98,12 +98,12 @@ CXXFLAGS_USR+= -Wall -std=c++0x -D_GLIBCXX_USE_NANOSLEEP
 
 
 #=============================================================================
-# TANGO_REQUIRED 
+# TANGO_REQUIRED
 # - TRUE  : your project depends on TANGO
 # - FALSE : your project does not depend on TANGO
 #-----------------------------------------------------------------------------
 # - NOTE : if PROJECT_TYPE is set to DEVICE, TANGO will be auto. added
-#-----------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------
 TANGO_REQUIRED = TRUE
 #=============================================================================
 #	include Standard TANGO compilation options
@@ -119,14 +119,19 @@ include $(MAKE_ENV)/tango.opt
 #=============================================================================
 # SVC_OBJS is the list of all objects needed to make the output
 #
-#SVC_INCL =  $(PACKAGE_NAME).h $(PACKAGE_NAME)Class.h 
+SVC_INCL = LiberaClient.h \
+		   LiberaAttr.h \
+		   LiberaLogsAttr.h \
+		   LiberaSignal.h \
+		   LiberaSignalAttr.h \
+		   LiberaScalarAttr.h
 
+SVC_OBJS =  $(LIB_OBJS)
 
-SVC_OBJS =      \
-            $(OBJDIR)/LiberaClient.o \
-            $(OBJDIR)/LiberaAttr.o   \
-            $(OBJDIR)/LiberaLogsAttr.o   \
-            $(OBJDIR)/LiberaSignal.o     
+LIB_OBJS =  $(OBJDIR)/LiberaClient.o \
+            $(OBJDIR)/LiberaAttr.o \
+            $(OBJDIR)/LiberaLogsAttr.o \
+            $(OBJDIR)/LiberaSignal.o
 
 #=============================================================================
 #	include common targets
@@ -148,7 +153,8 @@ install:
 	@echo "Installing $(OUTPUT_DIR)/lib$(PROJECT_NAME).so  to  $(INSTALL_DIR) , $(PWD)"
 ifeq ($(PROJECT_TYPE),SHARED_LIB)
 	mkdir -p $(INSTALL_DIR)
-	#TODO (leave completely the control to the debian package) next line used only during a "make install" command 
+	#TODO (leave completely the control to the debian package) next line used only during a "make install" command
 	mv $(OUTPUT_DIR)/lib$(PROJECT_NAME).so $(INSTALL_DIR)/lib$(PROJECT_NAME).so.$(MAJOR_VERS).$(MINOR_VERS)
 	#TODO Create debian files from debmake https://www.debian.org/doc/manuals/debmake-doc/ch04.en.html
+	#ln
 endif
