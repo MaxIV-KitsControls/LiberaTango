@@ -28,7 +28,7 @@ MAKE_ENV = $(TANGO_HOME)/share/pogo/preferences
 #
 PACKAGE_NAME = liberacommon
 MAJOR_VERS   = 3
-MINOR_VERS   = 1
+MINOR_VERS   = 2
 RELEASE      = Release_$(MAJOR_VERS)_$(MINOR_VERS)
 LIBERA_VERSION = 3.2
 
