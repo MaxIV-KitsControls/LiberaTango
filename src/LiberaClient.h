@@ -22,7 +22,7 @@ public:
     LiberaClient(Tango::DeviceImpl *a_deviceServer, std::string ip_address);
     ~LiberaClient();
 
-    bool Connect();
+    bool Connect(bool a_reuse_connection = false);
     void Disconnect();
     bool IsConnected();
 
@@ -127,6 +127,7 @@ public:
 
     bool Execute(const std::string &a_path);
     bool MagicCommand(const std::string &a_path, Tango::DevVarStringArray *a_out);
+
 private:
 
     void UpdateAttr();
@@ -149,6 +150,7 @@ private:
     //std::vector<std::shared_ptr<LiberaAttr> >   m_attr_pm; // platform list of attributes
     std::vector<std::shared_ptr<LiberaSignal> > m_signals; // list of managed signals
     std::map<LiberaAttr *, std::function<void ()> > m_notify; // map of notification callbacks
+
 public:
     std::string m_errorStatus;
     bool m_errorFlag;

@@ -217,13 +217,30 @@ void LiberaClient::Connect(mci::Node &a_root, mci::Root a_type)
 /**
  * Connect to application and platform daemons.
  */
-bool LiberaClient::Connect()
+bool LiberaClient::Connect(bool a_reuse_connection)
 {
     istd_FTRC();
 
+
+    bool reuseConnection(false);
+
+    if (a_reuse_connection) {
+        /* check if some other client has already opened connection to the instrument */
+        mci::Node n = mci::GetNode(m_ip_address.c_str(),  mci::Root::Application);
+        if (n.IsValid()) {
+            mci::ConnectionState state=mci::Ping(n);
+            if (state == mci::Connected) {
+                reuseConnection=true;
+                m_root = n;
+            }
+        }
+    }
+
     m_connected = false;
 
-    Connect(m_root, mci::Root::Application);
+    if (!reuseConnection) {
+        Connect(m_root, mci::Root::Application);
+    }
     //Connect(m_platform, mci::Root::Platform);
 
     // update attributes for the first time
@@ -232,7 +249,7 @@ bool LiberaClient::Connect()
         // set root node connection for signals
         for (auto i = m_signals.begin(); i != m_signals.end(); ++i) {
             if (!(*i)->Connect(m_root)) {
-                m_connected = false;
+            	m_connected = false;
                 istd_TRC(istd::eTrcLow, "Connection to signals failed.");
                 return false;
             }
