@@ -153,7 +153,7 @@ protected:
         if (!m_signal) {
             throw istd::Exception("Signal not initialized yet.");
         }
-        else if (m_signal->AccessType() == isig::eAccessStream) {
+        if (m_signal->AccessType() == isig::eAccessStream) {
             UpdateStream();
         }
         else if (m_signal->AccessType() == isig::eAccessDataOnDemand) {
@@ -270,7 +270,8 @@ private:
             }
 
             // Can be optimized using MetaBufferPtr if necessary.
-            if (m_dodClient->Read(*m_buf, signal_meta, GetOffset()) == isig::eSuccess) {
+            auto ret = m_dodClient->Read(*m_buf, signal_meta, GetOffset());
+            if ( ret == isig::eSuccess) {
                 m_updated = true;
                 istd_TRC(istd::eTrcMed, "Dod data read, buffer size: "
                     << m_buf->GetLength());
@@ -278,7 +279,7 @@ private:
             else {
                 // disable signal
                 istd_TRC(istd::eTrcLow, "Error reading dod in mode: " << GetMode());
-                throw istd::Exception("Failed to read dod!");
+                istd_EXCEPTION("Failed to read dod!" << ret);
             }
             m_dodClient->Close();
         }

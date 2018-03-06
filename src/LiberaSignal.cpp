@@ -77,11 +77,35 @@ void LiberaSignal::operator()()
     while (m_running) {
         if (*m_enabled && m_connected) {
             istd_TRC(istd::eTrcDetail, "Update from thread for: " << m_path);
-            Update();
-            if (m_mode == isig::eModeDodNow) {
-                // In order to avoid busy loop the dod acquisition with
-                // eModeDodNow waits here, since Read() is immediate.
-                std::this_thread::sleep_for(std::chrono::milliseconds(m_period));
+
+            try {
+                Update();
+                if (m_mode == isig::eModeDodNow) {
+                    // In order to avoid busy loop the dod acquisition with
+                    // eModeDodNow waits here, since Read() is immediate.
+                    std::this_thread::sleep_for(std::chrono::milliseconds(m_period));
+                }
+            }
+            catch (istd::Exception e) {
+                istd_TRC(istd::eTrcLow, "istd::Exception: " << e.what());
+            }
+            catch (Tango::DevFailed& e) {
+                istd_TRC(istd::eTrcLow, "DevFailed Tango exception: " << e._name());
+            }
+            catch (Tango::MultiDevFailed& e) {
+                istd_TRC(istd::eTrcLow, "MultiDevFailed Tango exception: " << e._name());
+            }
+            catch (CORBA::UserException& e) {
+                istd_TRC(istd::eTrcLow, "CORBA::UserException exception: " << e._name());
+            }
+            catch (CORBA::Exception& e) {
+                istd_TRC(istd::eTrcLow, "CORBA::Exception exception: " << e._name());
+            }
+            catch (std::exception &e) {
+                istd_TRC(istd::eTrcLow, "istd::Exception: " << e.what());
+            }
+            catch (...) {
+                istd_TRC(istd::eTrcLow, "unknown exception was detected");
             }
         }
         else {

@@ -22,7 +22,7 @@ public:
     LiberaClient(Tango::DeviceImpl *a_deviceServer, std::string ip_address);
     ~LiberaClient();
 
-    bool Connect();
+    bool Connect(bool a_reuse_connection = false);
     void Disconnect();
     bool IsConnected();
 
