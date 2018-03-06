@@ -27,8 +27,8 @@ MAKE_ENV = $(TANGO_HOME)/share/pogo/preferences
 # PACKAGE_NAME is the name of the library/device/exe you want to build
 #
 PACKAGE_NAME = liberacommon
-MAJOR_VERS   = 2
-MINOR_VERS   = 1
+MAJOR_VERS   = 3
+MINOR_VERS   = 2
 RELEASE      = Release_$(MAJOR_VERS)_$(MINOR_VERS)
 LIBERA_VERSION = $(LIBERA_API)
 
